@@ -141,8 +141,8 @@
 <p>Currently only the Atom plugin is available, but a Sublime Text plugin will follow shortly. After that, if the community has not already contributed Vim and Emacs plugins, we will do so.</p>
 <p><strong>When using Rsense, please be patient. After starting the server and triggering the initial completion, Rsense can be slow to load your projects dependencies into it's graph. It's quite fast after this initial completion and in the future we will optimize this.</strong></p>
 <h2 id="plugin-authors">Plugin Authors</h2>
-<p>Rsense plugins are easy to implement.  First your plugin may want to ensure the Rsense server has been started.  It can do this by shelling out to the command line with <code>rsense start</code>. Alternately, you can instruct your users to start it from the command line. The server can optionally take a port number like this: <code>rsense start --port 12345</code>. The default port is <code>47367</code>. It also takes a project path, in case the user has a <code>.rsense</code> config file there.  For now, this config file is not very useful, but it may become so in the future.</p>
-<p>The rsense server will be running at <code>http://localhost:47367</code> (or an alternate port if you specify one).  It communicates via json.  You need to send it json like the following example:</p>
+<p>Rsense plugins are easy to implement.  First your plugin may want to ensure the Rsense server has been started.  It can do this by shelling out to the command line with <code class="language-bash">rsense start</code>. Alternately, you can instruct your users to start it from the command line. The server can optionally take a port number like this: <code class="language-bash">rsense start --port 12345</code>. The default port is <code class="language-bash">47367</code>. It also takes a project path, in case the user has a <code class="language-bash">.rsense</code> config file there.  For now, this config file is not very useful, but it may become so in the future.</p>
+<p>The rsense server will be running at <code class="language-bash">http://localhost:47367</code> (or an alternate port if you specify one).  It communicates via json.  You need to send it json like the following example:</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">
 {
     "command": "code_completion",
@@ -155,7 +155,7 @@
     }
 }
 </code></pre>
-<p>For now, <code>code_completion</code> is the only command available, but this will change in the future. Project is the root dir of the user's project. This is needed for finding information about project dependencies.  Code is the text from the file where a completion is being triggered. Location should be obvious.</p>
+<p>For now, <code class="language-bash">code_completion</code> is the only command available, but this will change in the future. Project is the root dir of the user's project. This is needed for finding information about project dependencies.  Code is the text from the file where a completion is being triggered. Location should be obvious.</p>
 <p>Rsense will return json that looks like the below:</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">
 {
