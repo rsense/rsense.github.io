@@ -166,7 +166,7 @@
 
 <p>code is the text from the file where a completion is being triggered. We send it with the command because it is unlikely the user will have saved the file. Many tools which act on source code resolve this by writing to a tempfile, but I find this to be a hacky, and unnecessary solution. Rsense takes the code directly.</p>
 
-<p>>Location is tricky. Editor's measure cursor position in different ways. Rsense expects 1-based numbers here, with the first row, and first column being (1, 1). With each editor I've worked with, I've found it necessary to play around until it works. But you can examine spec/fixtures/test_gem/lib/sample.rb for the file from which the above json was generated for use as a test-case.</p>
+<p>Location is tricky. Editor's measure cursor position in different ways. Rsense expects 1-based numbers here, with the first row, and first column being (1, 1). With each editor I've worked with, I've found it necessary to play around until it works. But you can examine spec/fixtures/test_gem/lib/sample.rb for the file from which the above json was generated for use as a test-case.</p>
 
 <p>Rsense will return json that looks like the below:</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">
