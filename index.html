@@ -124,6 +124,7 @@
 <p>RSense is currently under heavy development and ready for testing.  Currently we need to improve the homepage and develop plugins for code_completion.  In the near future we'll also be ready to implement some of the other basic features like <code>find-definition</code>. After that, there's plenty to do in the long term.  See the waffle link below to find out where you can pitch in. It would be awesome if you helped get things done.</p>
 <p><img src="https://cloud.githubusercontent.com/assets/1395968/3344028/5b3c2f0a-f8a6-11e3-8952-c0f7155cb19e.gif" alt="Rsense in Atom editor"></p>
 <h2 id="installation">Installation</h2>
+<p>RSense is installed via RubyGems. It works well installed via Bundler as that gives it access to your application's LOAD_PATH very easily, and ensures it's installed into the same Ruby as your other dependencies if you happen to be using a version management tool like rbenv. Otherwise, be sure to install it with the proper version of Ruby.</p>
 <p>Add this line to your application's Gemfile:</p>
 <pre class="line-numbers language-bash"><code class="language-bash">gem 'rsense'
 </code></pre><p>And then execute:</p>
@@ -140,14 +141,14 @@
 <p>The Rsense server is started from the commandline with:</p>
 <pre class="line-numbers language-bash"><code class="language-bash">$ rsense start
 </code></pre><p>It takes two potential options: <code class="language-bash">--port</code> and <code class="language-bash">--path</code>.</p>
-<p>Currently only the Atom plugin is available, but a Sublime Text plugin will follow shortly. After that, if the community has not already contributed Vim and Emacs plugins, we will do so.</p>
+<p>Currently there are plugins for Atom, Sublime Text and Textmate2. If the community does not contribute Vim and Emacs plugins, we will eventually do so.</p>
 <p><strong>When using Rsense, please be patient. After starting the server, Rsense can take some time to warm up and to load your projects dependencies into it's graph. It's quite fast after returning the initial completion and we will continue working to optimize this.</strong></p>
 
 <p><img src="https://cloud.githubusercontent.com/assets/1395968/3489447/9fae5abc-052d-11e4-9dd9-447e36f1e112.gif" alt="Rsense in Sublime Text editor"></p>
 
 <h2 id="plugin-authors">Plugin Authors</h2>
 <p>Rsense plugins are easy to implement.  First your plugin may want to ensure the Rsense server has been started.  It can do this by shelling out to the command line with <code class="language-bash">rsense start</code>. Alternately, you can instruct your users to start it from the command line. The server can optionally take a port number like this: <code class="language-bash">rsense start --port 12345</code>. The default port is <code class="language-bash">47367</code>. It also takes a project path, in case the user has a <code class="language-bash">.rsense</code> config file there.  For now, this config file is not very useful, but it may become so in the future.</p>
-<p>The rsense server will be running at <code class="language-bash">http://localhost:47367</code> (or an alternate port if you specify one).  It communicates via json.  You need to send it json like the following example:</p>
+<p>The rsense server will be running at <code class="language-bash">http://localhost:47367</code> (or an alternate port if you specify one).  It communicates via json.  You need to send it json like the following example, via POST:</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">
 {
     "command": "code_completion",
@@ -160,7 +161,13 @@
     }
 }
 </code></pre>
-<p>For now, <code class="language-bash">code_completion</code> is the only command available, but this will change in the future. Project is the root dir of the user's project. This is needed for finding information about project dependencies.  Code is the text from the file where a completion is being triggered. Location should be obvious.</p>
+<p>For now, <code class="language-bash">code_completion</code> is the only command available, but this will change in the future. </p>
+<p>Use absolute paths for both paths as there's no way to be sure where the user may have rsense installed. Project is the root dir of the user's project. This is needed for finding information about project dependencies. Rsense uses project path to get information from RubyGems and Bundler about your dependencies so it can do accurate type inference. RSense uses the filepath for tracking SourcePosition. This is only slightly important for code-completion and most completions will work without it. HOWEVER, when we begin looking into source-rewriting for refactorings, or even exposing the already written Find Definition tool, it will be necessary.</p>
+
+<p>code is the text from the file where a completion is being triggered. We send it with the command because it is unlikely the user will have saved the file. Many tools which act on source code resolve this by writing to a tempfile, but I find this to be a hacky, and unnecessary solution. Rsense takes the code directly.</p>
+
+<p>>Location is tricky. Editor's measure cursor position in different ways. Rsense expects 1-based numbers here, with the first row, and first column being (1, 1). With each editor I've worked with, I've found it necessary to play around until it works. But you can examine spec/fixtures/test_gem/lib/sample.rb for the file from which the above json was generated for use as a test-case.</p>
+
 <p>Rsense will return json that looks like the below:</p>
 <pre class="line-numbers language-javascript"><code class="language-javascript">
 {
@@ -191,6 +198,20 @@ http://localhost:47367
 </code></pre>
 
 <p>Rsense currently only does completions at callsites, or points in the code where you would type '.' or '::'. Bear that in mind when designing an editor plugin.</p>
+
+<p>Rsense now comes with a secondary executable- _rsense_commandline.rb. If forming json and sending commands via http is difficult from your editor, _rsense_commandline.rb can do it for you. Just shell out to it with the needed info, like this:</p>
+
+<pre class="line-numbers language-bash"><code class="language-bash">
+_rsense_commandline.rb  --project=/home/projects/myproject  --filepath=/home/projects/myproject/lib/test_case.rb  --text='class TestCase
+  def junk
+    "Hello"
+  end
+end
+
+tt = TestCase.new
+tt.
+'  --location='7:3'
+</code></pre>
 
 <h2 id="contributing">Contributing</h2>
 <p>Contributions can only be accepted if they include tests.</p>
