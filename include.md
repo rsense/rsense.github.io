@@ -24,6 +24,7 @@ Or install it yourself as:
 
 Install one of these plugins:
 -  [rsense/atom-rsense](https://atom.io/packages/rsense)
+-  [Textmate2 rsense/rsense.tmbundle](https://github.com/rsense/rsense.tmbundle)
 
 The Rsense server is started from the commandline with:
 
